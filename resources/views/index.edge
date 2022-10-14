@@ -3,39 +3,46 @@
 <body>
   <main>
     @!component('templates/header')
-
     <section class="text-gray-600">
 
       <div class="container px-5 py-24 mx-auto">
-          <div class="lg:w-2/3 w-full mx-auto overflow-auto">
+        <div class="lg:w-2/3 w-full mx-auto overflow-auto">
+            <div class="container px-5 mx-auto my-6">
+                <form method="GET" action="{{ route('ContactsController.search') }}" class="flex items-center space-x-2">
+                    <input
+                    type="text" id="search" name="search" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                    >
+
+                    <button type="submit" class="flex ml-auto text-white bg-orange-500 border-0 py-2 px-6 focus:outline-none hover:bg-orange-600 rounded">Pesquisar</button>
+                </form>
+            </div>
               <div class="flex items-center justify-between mb-2">
                   <h1 class="text-2xl font-medium title-font mb-2 text-gray-900">Contatos</h1>
-                  <a href="#" class="flex ml-auto text-white bg-indigo-500 border-0 py-1.5 px-3 text-sm focus:outline-none hover:bg-indigo-600 rounded cursor-pointer">Adicionar</a>
+                  <a href="/create-contact" class="flex ml-auto text-white bg-gray-400 border-0 py-1.5 px-3 text-sm focus:outline-none hover:bg-gray-500 rounded cursor-pointer">Adicionar</a>
               </div>
               <table class="table-auto w-full text-left whitespace-no-wrap">
                   <thead>
                   <tr>
-                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">ID</th>
-                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Nome</th>
-                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Email</th>
-                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Telefone</th>
-                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Data de Nasc.</th>
-                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Ações</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200">ID</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Nome</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Email</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Telefone</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Data de Nasc.</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Ações</th>
                   </tr>
                   </thead>
-                  @each(contact in contacts)
+                  @each(contact in contacts.rows.sort((a, b) => a.id - b.id))
 
                   <tbody class="divide-y">
-                      <tr class="bg-gray-100">
+                      <tr class="{{contact.id%2==0 ? 'bg-gray-100' : ''}}">
                           <td class="px-4 py-3">{{contact.id}}</td>
                           <td class="px-4 py-3">{{contact.name}}</td>
                           <td class="px-4 py-3">{{contact.email}}</td>
                           <td class="px-4 py-3">{{contact.phone}}</td>
-                          <td class="px-4 py-3">{{contact.birthday}}</td>
+                          <td class="px-4 py-3">{{contact.birthday.toLocaleDateString()}}</td>
                           <td class="px-4 py-3 text-sm  text-gray-900">
-                              <a href="#" class="mt-3 text-indigo-500 inline-flex items-center cursor-pointer">Editar</a>
-                              <a href="/api/default/CRM_CONTATO/{{contact.id}}/delete" class="mt-3 text-red-500 inline-flex items-center cursor-pointer">Deletar</a>
-
+                              <a href="{{route('ContactsController.edit', {id: contact.id})}}" class="mt-3 text-indigo-500 inline-flex items-center cursor-pointer">Editar</a>
+                              <a href="{{route('ContactsController.destroy', {id: contact.id})}}" class="btn-delete mt-3 text-red-500 inline-flex items-center cursor-pointer ml-2">Deletar</a>
                           </td>
                       </tr>
                   </tbody>

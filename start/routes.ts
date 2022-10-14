@@ -36,8 +36,8 @@ Route.group(() => {
 
 Route.group(() => {
   Route.get('/', 'ContactsController.index').as('contacts.index')
-  Route.get('/:id', 'ContactsController.show').as('contacts.show')
   Route.get('/search/:params?', 'ContactsController.search').as('contacts.search')
+  Route.get('/:id', 'ContactsController.show').as('contacts.show')
 
   Route.post('/', 'ContactsController.store').as('contacts.store')
 
@@ -54,13 +54,21 @@ Route.group(() => {
  |--------------------------------------------------------------------------
 */
 
-Route.get('/', async ({ view }) => {
-  const contacts = await Database.from('contacts').paginate(1, 5)
-  contacts.baseUrl('/')
+Route.get('/', async ({ view, request }) => {
+  const page = request.input('page', 1)
+  const contacts = await Database.from('contacts').paginate(page, 10)
   return view.render('index', { contacts: contacts })
 })
   .as('index')
   .middleware('auth')
+
+Route.get('/create-contact', async ({ view }) => {
+  return view.render('create-contact')
+})
+  .as('create-contact')
+  .middleware('auth')
+
+Route.get('/edit-contact/:id', 'ContactsController.edit').as('edit-contact').middleware('auth')
 
 Route.get('/login', async ({ view }) => {
   return view.render('login')

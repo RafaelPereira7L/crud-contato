@@ -26,24 +26,19 @@ export default class ContactsController {
     }
   }
 
-  public async search({ request, response }) {
+  public async search({ request, response, session, view }) {
     try {
-      // const { name, email, phone } = request.all()
-      const { name } = request.all()
+      const search = request.input('search')
+      const contacts = await Contact.query().where('name', 'ilike', `%${search}%`).paginate(1, 10)
 
-      const contact = await Contact.query()
-        .where('name', 'ilike', `%${name}%`)
-        // .orWhere('email', 'like', `%${email}%`)
-        // .orWhere('phone', 'like', `%${phone}%`)
-        .paginate(1, 10)
-
-      return response.status(200).send({ success: true, data: contact })
+      return view.render('index', { contacts: contacts })
     } catch (error) {
-      return response.status(404).send({ success: false, message: error })
+      session.flash('error', 'Erro ao buscar contatos.')
+      return response.redirect().back()
     }
   }
 
-  public async store({ request, response }) {
+  public async store({ request, response, session }) {
     try {
       const contactSchema = schema.create({
         name: schema.string(),
@@ -52,21 +47,24 @@ export default class ContactsController {
           rules.mobile(),
           rules.unique({ table: 'contacts', column: 'phone' }),
         ]),
-        birthday: schema.date({ format: 'dd-MM-yyyy' }),
+        birthday: schema.date(),
       })
 
       const payload = await request.validate({ schema: contactSchema })
 
-      const contact = await Contact.create(payload)
-      return response
-        .status(201)
-        .send({ success: true, message: 'Contato criado com sucesso.', data: contact })
+      await Contact.create(payload)
+      return response.redirect().toRoute('/')
     } catch (error) {
-      return error
+      session.flash('error', 'Erro ao cadastrar contato.')
+      session.flash('name', request.input('name'))
+      session.flash('email', request.input('email'))
+      session.flash('phone', request.input('phone'))
+      session.flash('birthday', request.input('birthday'))
+      return response.redirect().back()
     }
   }
 
-  public async update({ params, request, response }) {
+  public async update({ params, request, response, session }) {
     try {
       const contactSchema = schema.create({
         name: schema.string.optional(),
@@ -86,12 +84,20 @@ export default class ContactsController {
       const contact = await Contact.findOrFail(params.id)
       contact.merge(payload)
       await contact.save()
-
-      return response
-        .status(200)
-        .send({ success: true, message: 'Contato atualizado com sucesso.', data: contact })
+      session.flash('success', 'Sucesso ao editar contato.')
+      return response.redirect().back()
     } catch (error) {
-      return response.status(404).send({ success: false, message: error })
+      session.flash('error', 'Erro ao editar contato.')
+      return response.redirect().back()
+    }
+  }
+
+  public async edit({ params, response, view }) {
+    try {
+      const contact = await Contact.findOrFail(params.id)
+      return view.render('edit-contact', { contact: contact })
+    } catch (error) {
+      return response.status(404).send({ success: false, message: 'Contato não encontrado.' })
     }
   }
 
@@ -100,7 +106,7 @@ export default class ContactsController {
       const contact = await Contact.findOrFail(params.id)
       await contact.delete()
 
-      return response.status(200).send({ success: true, message: 'Contato deletado com sucesso.' })
+      return response.redirect().toRoute('/')
     } catch (error) {
       return response.status(404).send({ success: false, message: 'Contato não encontrado.' })
     }
