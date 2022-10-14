@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+@!component('templates/head')
+<body>
+  <main>
+    @!component('templates/header')
+
+    <section class="text-gray-600">
+
+      <div class="container px-5 py-24 mx-auto">
+          <div class="lg:w-2/3 w-full mx-auto overflow-auto">
+              <div class="flex items-center justify-between mb-2">
+                  <h1 class="text-2xl font-medium title-font mb-2 text-gray-900">Contatos</h1>
+                  <a href="#" class="flex ml-auto text-white bg-indigo-500 border-0 py-1.5 px-3 text-sm focus:outline-none hover:bg-indigo-600 rounded cursor-pointer">Adicionar</a>
+              </div>
+              <table class="table-auto w-full text-left whitespace-no-wrap">
+                  <thead>
+                  <tr>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">ID</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Nome</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Email</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Telefone</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Data de Nasc.</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Ações</th>
+                  </tr>
+                  </thead>
+                  @each(contact in contacts)
+
+                  <tbody class="divide-y">
+                      <tr class="bg-gray-100">
+                          <td class="px-4 py-3">{{contact.id}}</td>
+                          <td class="px-4 py-3">{{contact.name}}</td>
+                          <td class="px-4 py-3">{{contact.email}}</td>
+                          <td class="px-4 py-3">{{contact.phone}}</td>
+                          <td class="px-4 py-3">{{contact.birthday}}</td>
+                          <td class="px-4 py-3 text-sm  text-gray-900">
+                              <a href="#" class="mt-3 text-indigo-500 inline-flex items-center cursor-pointer">Editar</a>
+                              <a href="/api/default/CRM_CONTATO/{{contact.id}}/delete" class="mt-3 text-red-500 inline-flex items-center cursor-pointer">Deletar</a>
+
+                          </td>
+                      </tr>
+                  </tbody>
+                  @endeach
+              </table>
+              <div class="flex justify-end">
+                @each(anchor in contacts.getUrlsForRange(1, contacts.lastPage))
+                  <a class="py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-sm border-solid border border-gray-300 hover:bg-gray-100 hover:text-gray-700" href="{{ anchor.url }}">
+                    {{ anchor.page }}
+                  </a>
+                  @endeach
+              </div>
+            </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

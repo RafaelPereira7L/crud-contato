@@ -1,0 +1,31 @@
+<header class="text-white bg-orange-400 font-medium">
+  <div class="container mx-auto flex justify-between items-center p-5">
+    <a class="mr-5 hover:text-black cursor-pointer" href="/">Inicio</a>
+      <div class="flex items-center">
+        @if(auth.isLoggedIn)
+        <span class="mr-2">Olá, {{ auth.user.name }}</span>
+        <nav class="flex flex-wrap text-base justify-center">
+          <a class="inline-flex items-center bg-gray-400 border-0 py-1 px-3 focus:outline-none hover:bg-gray-500 rounded text-base md:mt-0 cursor-pointer"
+           href="{{ route('UsersController.logout') }}">
+            Logout
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-logout ml-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z"/>
+              <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
+              <path d="M7 12h14l-3 -3m0 6l3 -3" />
+            </svg>
+          </a>
+        </nav>
+        @else
+          <nav class="flex flex-wrap text-base justify-center">
+            <a class="mr-5 hover:text-black cursor-pointer" href="/login">Login</a>
+          </nav>
+          <a class="inline-flex items-center bg-gray-400 border-0 py-1 px-3 focus:outline-none hover:bg-gray-500 rounded text-base md:mt-0 cursor-pointer" href="/register">
+            Registro
+              <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-1" viewBox="0 0 24 24">
+                  <path d="M5 12h14M12 5l7 7-7 7"></path>
+              </svg>
+          </a>
+        @endif
+      </div>
+  </div>
+</header>
